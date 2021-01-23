@@ -1,59 +1,56 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
-let students = [{
-    label: "Name",
-    key: 'name'
-  },
-  {
-    label : "USN Number",
-    key : 'usn'
-  },
-  {
-    label : "Branch Name",
-    key : 'branch'
-  },
-  {
-    label : "Email",
-    key : 'email'
-  }
+let students = [
+  { label: "Name", key: "name", name: "name" },
+  { label: "USN Number", key: "usn", name: "usn" },
+  { label: "Branch Name", key: "branch", name: "branch" },
+  { label: "Email", key: "email", name: "email" },
+];
 
-]
-
-
+const initialFormData = Object.freeze({
+  name: "",
+  usn: "",
+  branch: "",
+  email: "",
+});
 
 function App() {
-    const[studentData,setstudentData]=useState("");
-    
+  const [studentData, setState] = useState([]);
+  const [formData, updateFormData] = useState(initialFormData);
 
-      const handlerChange =(event) =>{
-        setstudentData(event.target.value);
-      };
+  const handleChange = (e) => {
+    updateFormData({
+      ...formData,
+      [e.target.name]: e.target.value.trim(),
+    });
+  };
 
-      const onSubmit=()=>{
-        setstudentData(studentData);
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const latest_data = {};
+    students.forEach((student) => {
+      latest_data[student.name] = formData[student.key];
+    });
+    setState([...studentData, latest_data]);
+    e.target.reset();
+  };
 
-      }
   return (
-
     <div className="App">
-   
-      <form>
-      <fieldset>
-        Student Information
-        {
-          students.map(student =>{
-          return <div>
-            {student.label}
-          
-           <input value={studentData[student.key]}
-           onChange={handlerChange}/>
-          </div>
+      Student Information
+      <form onSubmit={onSubmit}>
+        {students.map((student) => {
+          return (
+            <div>
+              {student.label}
+              <input name={student.name} onChange={handleChange} />
+            </div>
+          );
         })}
-        <button onClick={onSubmit}>submit</button>
-      </fieldset>
+        <button type="submit">Submit</button>
       </form>
-
+      {JSON.stringify(studentData)}
     </div>
   );
 }
