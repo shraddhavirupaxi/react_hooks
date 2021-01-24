@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import JSONPretty from "react-json-pretty";
 import "./App.css";
 
 let students = [
-  { label: "Name", key: "name", name: "name" },
-  { label: "USN Number", key: "usn", name: "usn" },
-  { label: "Branch Name", key: "branch", name: "branch" },
-  { label: "Email", key: "email", name: "email" },
+  { label: "Name *", key: "name" },
+  { label: "USN Number *", key: "usn" },
+  { label: "Branch Name *", key: "branch" },
+  { label: "Email *", key: "email" },
 ];
 
 const initialFormData = Object.freeze({
@@ -28,12 +29,14 @@ function App() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const latest_data = {};
-    students.forEach((student) => {
-      latest_data[student.name] = formData[student.key];
-    });
-    setState([...studentData, latest_data]);
     e.target.reset();
+    const isEmpty = Object.values(formData).every((x) => x === "");
+    if (isEmpty === false) {
+      setState([...studentData, formData]);
+    }
+    updateFormData({
+      ...initialFormData,
+    });
   };
 
   return (
@@ -43,14 +46,17 @@ function App() {
         {students.map((student) => {
           return (
             <div>
-              {student.label}
-              <input name={student.name} onChange={handleChange} />
+              <label>{student.label} </label>
+              <input name={student.key} onChange={handleChange} />
             </div>
           );
         })}
         <button type="submit">Submit</button>
       </form>
-      {JSON.stringify(studentData)}
+      <JSONPretty
+        id="json-pretty"
+        data={JSON.stringify(studentData)}
+      ></JSONPretty>
     </div>
   );
 }
