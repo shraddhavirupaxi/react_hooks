@@ -1,58 +1,66 @@
-import React, { useState } from "react";
-import "./App.css";
+import React, { useState, useEffect } from 'react';
 
-let students = [
-  { label: "Name", key: "name", name: "name" },
-  { label: "USN Number", key: "usn", name: "usn" },
-  { label: "Branch Name", key: "branch", name: "branch" },
-  { label: "Email", key: "email", name: "email" },
+let student = [
+	{
+		key: 'name',
+		label: 'Enter your Name '
+	},
+	{
+		key: 'usn',
+		label: 'Enter your University Number'
+	},
+	{
+		key: 'branch',
+		label: 'Enter your Branch'
+	},
+	{
+		key: 'email',
+		label: 'Enter your Email'
+	}
 ];
 
-const initialFormData = Object.freeze({
-  name: "",
-  usn: "",
-  branch: "",
-  email: "",
-});
+function isEmpty(obj) {
+	return Object.keys(obj).length !== 0;
+}
 
 function App() {
-  const [studentData, setState] = useState([]);
-  const [formData, updateFormData] = useState(initialFormData);
+	const [ formData, updateFormData ] = useState({});
+  const [ studentData, updateStudentData ] = useState([]);
+  
+	const onSubmit = (event) => {
+		event.preventDefault();
+		if (isEmpty(formData)) {
+			updateStudentData([ ...studentData, formData ]);
+			event.target.reset();
+      updateFormData({});
+      localStorage.removeItem("Shraddha")
+		}
+	};
 
-  const handleChange = (e) => {
-    updateFormData({
-      ...formData,
-      [e.target.name]: e.target.value.trim(),
-    });
-  };
+	const onChange = (event) => {
+		updateFormData({
+			...formData,
+			[event.target.name]: event.target.value
+		});
+	};
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    const latest_data = {};
-    students.forEach((student) => {
-      latest_data[student.name] = formData[student.key];
-    });
-    setState([...studentData, latest_data]);
-    e.target.reset();
-  };
-
-  return (
-    <div className="App">
-      Student Information
-      <form onSubmit={onSubmit}>
-        {students.map((student) => {
-          return (
-            <div>
-              {student.label}
-              <input name={student.name} onChange={handleChange} />
-            </div>
-          );
-        })}
-        <button type="submit">Submit</button>
-      </form>
-      {JSON.stringify(studentData)}
-    </div>
-  );
+	return (
+		<div>
+			<form onSubmit={onSubmit}>
+				{student.map((entry) => {
+					return (
+						<div>
+							<label>{entry.label}</label>
+							<input label={entry.label} name={entry.key} onChange={onChange} />
+						</div>
+					);
+				})}
+				<button type="submit">submit</button>
+			</form>
+			{JSON.stringify(formData)}
+			<p>{JSON.stringify(studentData)}</p>
+		</div>
+	);
 }
 
 export default App;
